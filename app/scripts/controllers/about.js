@@ -8,6 +8,6 @@
  * Controller of the appleWatchUiApp
  */
 angular.module('AppleWatchUIApp')
-  .controller('AboutCtrl', function ($scope) {
-    
+  .controller('AboutCtrl', function () {
+
   });

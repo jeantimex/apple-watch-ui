@@ -10,7 +10,7 @@ angular
   return {
     restrict: 'E',
     link: function (scope, element, attrs) {
-      var app = scope[attrs.app];
+      //var app = scope[attrs.app];
 
       element.addClass('app');
 
@@ -21,8 +21,8 @@ angular
         // Position
         var row = parseInt(app.idx / 5),
             col = parseInt(app.idx % 5);
-            
-        var offset = row % 2 == 0 ? 0 : 22.5;
+
+        var offset = row % 2 === 0 ? 0 : 22.5;
 
         var x = offset + col * (base + 5),
             y = row * base;

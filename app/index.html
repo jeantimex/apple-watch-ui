@@ -2,7 +2,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title> Apple Watch UI</title>
+    <title>Apple Watch UI</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <!-- endbower -->
     <!-- endbuild -->
-    <!-- build:css(.tmp) styles/main.css -->
+    <!-- build:css(.tmp) styles/index.css -->
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/home.css">
+    <link rel="stylesheet" href="styles/watch.css">
     <!-- endbuild -->
   </head>
   <body ng-app="AppleWatchUIApp">
@@ -32,7 +32,7 @@
             <a ng-href="#/about">About</a>
           </li>
         </ul>
-        <h3 class="text-muted">Apple Watch UI</h3>
+        <h3 class="text-muted"></h3>
       </div>
 
       <div ng-view=""></div>
@@ -77,9 +77,10 @@
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/app.js"></script>
-    <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/watch.js"></script>
     <script src="scripts/controllers/about.js"></script>
     <!-- directives -->
+    <script src="scripts/directives/home.js"></script>
     <script src="scripts/directives/app.js"></script>
     <!-- endbuild -->
 </body>
