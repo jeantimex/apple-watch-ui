@@ -8,28 +8,16 @@ angular
 .module('AppleWatchUIApp')
 .directive('app', function () {
   return {
-    restrict: 'E',
-    link: function (scope, element, attrs) {
-      //var app = scope[attrs.app];
 
+    restrict: 'E',
+
+    link: function (scope, element, attrs) {
       element.addClass('app');
 
-      // X & Y
+      // Transform
       scope.$watch(attrs.app, function (app) {
-        var base = 40;
-
-        // Position
-        var row = parseInt(app.idx / 5),
-            col = parseInt(app.idx % 5);
-
-        var offset = row % 2 === 0 ? 0 : 22.5;
-
-        var x = offset + col * (base + 5),
-            y = row * base;
-
-        element.css('top', y + 'px');
-        element.css('left', x + 'px');
-
+        var transformCSS = 'translate3d(' + app.x + 'px,' + app.y + 'px,' + app.z + 'px) scale(' + app.scale + ')';
+        element.css('transform', transformCSS);
       }, true);
     }
   };

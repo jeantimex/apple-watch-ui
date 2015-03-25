@@ -8,15 +8,6 @@
  * Controller of the AppleWatchUIApp
  */
 angular.module('AppleWatchUIApp')
-  .controller('WatchCtrl', function ($scope) {
-
-    $scope.apps = [];
-
-    for (var i = 0; i < 25; i++) {
-      $scope.apps.push({
-        'name': 'app',
-        'idx': i
-      });
-    }
+  .controller('WatchCtrl', function () {
 
   });
