@@ -1,8 +1,7 @@
 .watch {
   width: 250px;
   height: 460px;
-  /*background-image: url("../images/apple-watch.png");*/
-  background-repeat: no-repeat;
+  background: url("../images/apple-watch.png") no-repeat;
   position: relative;
 }
 
@@ -12,7 +11,6 @@
   height: 190px;
   left: 44px;
   top: 130px;
-  border: 1px solid black;
   overflow: hidden;
 }
 
@@ -31,5 +29,5 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: darkgray;
+  background-color: white;
 }
