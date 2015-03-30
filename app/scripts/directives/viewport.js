@@ -42,7 +42,7 @@ angular
             var moveX = e.originalEvent.pageX - lastX;
             var moveY = e.originalEvent.pageY - lastY;
 
-            scope.$broadcast('move', moveX, moveY);
+            scope.$broadcast('touchmove', moveX, moveY);
 
             lastX = e.originalEvent.pageX;
             lastY = e.originalEvent.pageY;
@@ -51,6 +51,8 @@ angular
           // up
           window.on('touchend mouseup' ,function() {
             window.off('touchmove mousemove touchend mouseup');
+
+            scope.$broadcast('touchend');
           });
 
         });
