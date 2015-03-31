@@ -6,7 +6,7 @@
 
 angular
   .module('AppleWatchUIApp')
-  .directive('home', function ($timeout, $interval) {
+  .directive('home', function ($timeout) {
     return {
       restrict: 'E',
 
