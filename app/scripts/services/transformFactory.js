@@ -1,5 +1,3 @@
-/* global $:false */
-
 'use strict';
 
 /**
