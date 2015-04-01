@@ -8,29 +8,50 @@
  * Controller of the AppleWatchUIApp
  */
 angular.module('AppleWatchUIApp')
-  .controller('HomeCtrl', function ($scope, TransformFactory) {
+  .controller('HomeCtrl', function ($scope, $timeout, TransformFactory) {
     $scope.apps = [];
 
     $scope.deltaX = 0;
     $scope.deltaY = 0;
 
-    $scope.scrollX = 0;
-    $scope.scrollY = 0;
+    var scrollX = 0;
+    var scrollY = 0;
 
-    $scope.scrollMoveX = 0;
-    $scope.scrollMoveY = 0;
+    var scrollMoveX = 0;
+    var scrollMoveY = 0;
 
-    $scope.scrollRangeX = 30;
-    $scope.scrollRangeY = 10;
+    var scrollRangeX = 30;
+    var scrollRangeY = 10;
 
-    $scope.inertia = null;
-    $scope.inertiaX = 0;
-    $scope.inertiaY = 0;
+    var inertiaX = 0;
+    var inertiaY = 0;
 
-    $scope.screenW = 150;
-    $scope.screenH = 190;
+    var screenW = 150;
+    var screenH = 190;
 
-    $scope.appSize = 37;
+    var appSize = 37;
+
+    var numApps = 19;
+
+    ///////////////////////////////////
+    var transformApps = function (t) {
+      for (var i = 0; i < $scope.apps.length; i++) {
+        var app = $scope.apps[i];
+
+        app.x = t[i].x + screenW / 2 - appSize / 2;
+        app.y = t[i].y + screenH / 2 - appSize / 2;
+        app.scale = t[i].scale;
+      }
+    };
+
+    var init = function () {
+      for (var i = 0; i < numApps; i++) {
+        $scope.apps.push({'x': 0, 'y': 0, 'z': 0, 'scale': 0});
+      }
+
+      var t = TransformFactory.getTransform(150, 190, 100, 31.5, 0, 0);
+      transformApps(t);
+    };
 
     ///////////////////////////////////
     $scope.$on('touchmove', function (e, moveX, moveY) {
@@ -38,84 +59,81 @@ angular.module('AppleWatchUIApp')
         $scope.deltaX = moveX;
         $scope.deltaY = moveY;
 
-        $scope.scrollMoveX += moveX;
-        $scope.scrollMoveY += moveY;
+        scrollMoveX += moveX;
+        scrollMoveY += moveY;
 
-        $scope.scrollX = $scope.scrollMoveX;
-        $scope.scrollY = $scope.scrollMoveY;
+        scrollX = scrollMoveX;
+        scrollY = scrollMoveY;
 
-        if ($scope.scrollMoveX > $scope.scrollRangeX) {
-          $scope.scrollX = $scope.scrollRangeX + ($scope.scrollMoveX - $scope.scrollRangeX) / 2;
+        if (scrollMoveX > scrollRangeX) {
+          scrollX = scrollRangeX + (scrollMoveX - scrollRangeX) / 2;
         }
-        else if ($scope.scrollX < -$scope.scrollRangeX) {
-          $scope.scrollX = -$scope.scrollRangeX + ($scope.scrollMoveX + $scope.scrollRangeX) / 2;
-        }
-
-        if ($scope.scrollMoveY > $scope.scrollRangeY) {
-          $scope.scrollY = $scope.scrollRangeY + ($scope.scrollMoveY - $scope.scrollRangeY) / 2;
-        }
-        else if ($scope.scrollY < -$scope.scrollRangeY) {
-          $scope.scrollY = -$scope.scrollRangeY + ($scope.scrollMoveY + $scope.scrollRangeY) / 2;
+        else if (scrollX < -scrollRangeX) {
+          scrollX = -scrollRangeX + (scrollMoveX + scrollRangeX) / 2;
         }
 
-        var t = TransformFactory.getTransform(150, 190, 100, 31.5, $scope.scrollX, $scope.scrollY);
-
-        for (var i = 0; i < 19; i++) {
-          var app = $scope.apps[i];
-          app.x = t[i].x + $scope.screenW / 2 - $scope.appSize / 2;
-          app.y = t[i].y + $scope.screenH / 2 - $scope.appSize / 2;
-          app.scale = t[i].scale;
+        if (scrollMoveY > scrollRangeY) {
+          scrollY = scrollRangeY + (scrollMoveY - scrollRangeY) / 2;
         }
+        else if (scrollY < -scrollRangeY) {
+          scrollY = -scrollRangeY + (scrollMoveY + scrollRangeY) / 2;
+        }
+
+        var t = TransformFactory.getTransform(150, 190, 100, 31.5, scrollX, scrollY);
+        transformApps(t);
       });
     });
 
     ///////////////////////////////////
-    $scope.finishMove = function (step, steps, distanceX, distanceY) {
-      $scope.scrollMoveX = $scope.scrollX;
-      $scope.scrollMoveY = $scope.scrollY;
+    var step = 1;
+    var steps = 32;
+    var timer = null;
 
-      $scope.inertiaX = $.easing["easeOutCubic"](null, step, 0, distanceX, steps) - $.easing["easeOutCubic"](null, (step - 1), 0, distanceX, steps);
-      $scope.inertiaY = $.easing["easeOutCubic"](null, step, 0, distanceY, steps) - $.easing["easeOutCubic"](null, (step - 1), 0, distanceY, steps);
+    $scope.$on('touchend', function () {
+      step = 1;
+      steps = 32;
+      timer = $timeout(handler, 16);
+    });
 
-      $scope.scrollX += $scope.inertiaX;
-      $scope.scrollY += $scope.inertiaY;
+    var handler = function () {
+      $scope.$apply(function () {
+        $scope.finishMove(step++, steps, $scope.deltaX * 10, $scope.deltaY * 10);
+      });
 
-      if ($scope.scrollX > $scope.scrollRangeX) {
-        $scope.scrollX -= ($scope.scrollX - $scope.scrollRangeX) / 4;
-      }
-      else if ($scope.scrollX < -$scope.scrollRangeX) {
-        $scope.scrollX -= ($scope.scrollX + $scope.scrollRangeX) / 4;
-      }
-
-      if ($scope.scrollY > $scope.scrollRangeY) {
-        $scope.scrollY -= ($scope.scrollY - $scope.scrollRangeY) / 4;
-      }
-      else if ($scope.scrollY < -$scope.scrollRangeY) {
-        $scope.scrollY -= ($scope.scrollY + $scope.scrollRangeY) / 4;
-      }
-
-      var t = TransformFactory.getTransform(150, 190, 100, 31.5, $scope.scrollX, $scope.scrollY);
-
-      for (var i = 0; i < 19; i++) {
-        var app = $scope.apps[i];
-
-        app.x = t[i].x + $scope.screenW / 2 - $scope.appSize / 2;
-        app.y = t[i].y + $scope.screenH / 2 - $scope.appSize / 2;
-        app.scale = t[i].scale;
+      if (step < steps) {
+        timer = $timeout(handler, 16);
       }
     };
 
     ///////////////////////////////////
-    var t = TransformFactory.getTransform(150, 190, 100, 31.5, 0, 0);
+    $scope.finishMove = function (step, steps, distanceX, distanceY) {
+      scrollMoveX = scrollX;
+      scrollMoveY = scrollY;
 
-    for (var i = 0; i < 19; i++) {
-      $scope.apps.push({
-        'x': t[i].x + $scope.screenW / 2 - $scope.appSize / 2,
-        'y': t[i].y + $scope.screenH / 2 - $scope.appSize / 2,
-        'z': 0,
-        'scale': t[i].scale
-      });
-    }
+      inertiaX = $.easing["easeOutCubic"](null, step, 0, distanceX, steps) - $.easing["easeOutCubic"](null, (step - 1), 0, distanceX, steps);
+      inertiaY = $.easing["easeOutCubic"](null, step, 0, distanceY, steps) - $.easing["easeOutCubic"](null, (step - 1), 0, distanceY, steps);
 
+      scrollX += inertiaX;
+      scrollY += inertiaY;
 
+      if (scrollX > scrollRangeX) {
+        scrollX -= (scrollX - scrollRangeX) / 4;
+      }
+      else if (scrollX < -scrollRangeX) {
+        scrollX -= (scrollX + scrollRangeX) / 4;
+      }
+
+      if (scrollY > scrollRangeY) {
+        scrollY -= (scrollY - scrollRangeY) / 4;
+      }
+      else if (scrollY < -scrollRangeY) {
+        scrollY -= (scrollY + scrollRangeY) / 4;
+      }
+
+      var t = TransformFactory.getTransform(150, 190, 100, 31.5, scrollX, scrollY);
+      transformApps(t);
+    };
+
+    ///////////////////////////////////
+    init();
   });

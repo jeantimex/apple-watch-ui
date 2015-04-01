@@ -10,6 +10,8 @@ angular
 
     var service = {};
 
+    var hexCoordinates = null;
+
     /**
      *
      * @param num
@@ -52,27 +54,27 @@ angular
      * http://stackoverflow.com/questions/2049196/generating-triangular-hexagonal-coordinates-xyz
      *
      * @param layer
-     * @param radius
-     * @param offsetX
-     * @param offsetY
      */
-    var getHexagonalCoordinates = function (layer, radius, offsetX, offsetY) {
+    var getHexagonalCoordinates = function (layer) {
       var res = [];
 
-      for (var i = 0; i < layer; i++) {
-        for (var j = -i; j <= i; j++) {
-          for (var k = -i; k <= i; k++) {
-            for (var l = -i; l <= i; l++) {
-              if (Math.abs(j) + Math.abs(k) + Math.abs(l) === i * 2 && j + k + l === 0) {
-                res.push({
-                  'x': (k + j / 2) * radius + offsetX,
-                  'y': Math.sqrt(3) / 2 * j * radius + offsetY
-                });
+      if (!angular.isArray(hexCoordinates)) {
+        hexCoordinates = [];
+
+        for (var i = 0; i < layer; i++) {
+          for (var j = -i; j <= i; j++) {
+            for (var k = -i; k <= i; k++) {
+              for (var l = -i; l <= i; l++) {
+                if (Math.abs(j) + Math.abs(k) + Math.abs(l) === i * 2 && j + k + l === 0) {
+                  hexCoordinates.push({'x': j, 'y': k, 'z': l});
+                }
               }
             }
           }
         }
       }
+
+      angular.copy(hexCoordinates, res);
 
       return res;
     };
@@ -90,8 +92,18 @@ angular
      */
     service.getTransform = function (screenW, screenH, sphereR, hexR, scrollX, scrollY) {
       // Step 1. Calculate the hexagonal layout in cartesian system
-      var hexCartesian = getHexagonalCoordinates(4, hexR, scrollX, scrollY);
-      var len = hexCartesian.length;
+      var hexCartesian = [];
+      var coordinates = getHexagonalCoordinates(4);
+      var len = coordinates.length;
+
+      for (i = 0; i < len; i++) {
+        var coor = coordinates[i];
+
+        hexCartesian.push({
+          'x': (coor.x / 2 + coor.y) * hexR + scrollX,
+          'y': Math.sqrt(3) / 2 * coor.x * hexR + scrollY
+        });
+      }
 
       // Step 2. Convert the cartesian system to polar system
       var hexPolar = [];
