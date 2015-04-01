@@ -13,6 +13,7 @@ angular
     var hexCoordinates = null;
 
     /**
+     * Get absolute value
      *
      * @param num
      * @returns {number}
@@ -80,7 +81,7 @@ angular
     };
 
     /**
-     *
+     * Calculate the transform objects
      *
      * @param screenW
      * @param screenH
@@ -184,7 +185,7 @@ angular
         if (y < -screenH / 2 + 2 * edge) {
           obj.y += $.easing.easeInSine(null, screenH / 2 - abs(y) - 2 * edge, 0, 8, 2 * edge);
         }
-        else if(y > screenH / 2 - 2 * edge) {
+        else if (y > screenH / 2 - 2 * edge) {
           obj.y += $.easing.easeInSine(null, screenH / 2 - abs(y) - 2 * edge, 0, -8, 2 * edge);
         }
       }
