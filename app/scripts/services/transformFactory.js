@@ -1,3 +1,5 @@
+/* global $:false */
+
 'use strict';
 
 /**
@@ -91,12 +93,14 @@ angular
      * @returns {Array}
      */
     service.getTransform = function (screenW, screenH, sphereR, hexR, scrollX, scrollY) {
+      var depth;
+
       // Step 1. Calculate the hexagonal layout in cartesian system
       var hexCartesian = [];
       var coordinates = getHexagonalCoordinates(4);
       var len = coordinates.length;
 
-      for (i = 0; i < len; i++) {
+      for (var i = 0; i < len; i++) {
         var coor = coordinates[i];
 
         hexCartesian.push({
@@ -108,7 +112,7 @@ angular
       // Step 2. Convert the cartesian system to polar system
       var hexPolar = [];
 
-      for (var i = 0; i < len; i++) {
+      for (i = 0; i < len; i++) {
         hexPolar[i] = cartesian2polar(hexCartesian[i].x, hexCartesian[i].y);
       }
 
@@ -117,21 +121,21 @@ angular
 
       for (i = 0; i < len; i++) {
         var angle = hexPolar[i].radius / sphereR;
-        var radius, depth;
+        var radius;
 
         if (angle < Math.PI / 2) {
-          radius = hexPolar[i].radius * $.easing["swing"](null, angle / (Math.PI / 2), 1.5, -0.5, 1);
-          depth = $.easing["easeInOutCubic"](null, angle / (Math.PI / 2), 1, -0.5, 1);
+          radius = hexPolar[i].radius * $.easing.swing(null, angle / (Math.PI / 2), 1.5, -0.5, 1);
+          depth = $.easing.easeInOutCubic(null, angle / (Math.PI / 2), 1, -0.5, 1);
         } else {
           radius = hexPolar[i].radius;
-          depth = $.easing["easeInOutCubic"](null, 1, 1, -0.5, 1);
+          depth = $.easing.easeInOutCubic(null, 1, 1, -0.5, 1);
         }
 
         hexSphere[i] = {
           'radius' : radius,
           'depth'  : depth,
           'angle'  : hexPolar[i].angle
-        }
+        };
       }
 
       // Step 4. Convert sphere system to catesian
@@ -158,14 +162,14 @@ angular
           obj.scale = depth * 0.4;
         }
         else if (abs(x) > screenW / 2 - 2 * edge && abs(y) > screenH / 2 - 2 * edge) {
-          obj.scale = Math.min(depth * $.easing["easeInOutSine"](null, screenW / 2 - abs(x) - edge, 0.4, 0.6, edge),
-                               depth * $.easing["easeInOutSine"](null, screenH / 2 - abs(y) - edge, 0.3, 0.7, edge) );
+          obj.scale = Math.min(depth * $.easing.easeInOutSine(null, screenW / 2 - abs(x) - edge, 0.4, 0.6, edge),
+                               depth * $.easing.easeInOutSine(null, screenH / 2 - abs(y) - edge, 0.3, 0.7, edge));
         }
         else if (abs(x) > screenW / 2 - 2 * edge) {
-          obj.scale = depth * $.easing["easeOutSine"](null, screenW / 2 - abs(x) - edge, 0.4, 0.6, edge);
+          obj.scale = depth * $.easing.easeOutSine(null, screenW / 2 - abs(x) - edge, 0.4, 0.6, edge);
         }
         else if (abs(y) > screenH / 2 - 2 * edge) {
-          obj.scale = depth * $.easing["easeOutSine"](null, screenH / 2 - abs(y) - edge, 0.4, 0.6, edge);
+          obj.scale = depth * $.easing.easeOutSine(null, screenH / 2 - abs(y) - edge, 0.4, 0.6, edge);
         }
         else {
           obj.scale = depth;
@@ -173,17 +177,17 @@ angular
 
         // Adjust the x y position
         if (x < -screenW / 2 + 2 * edge) {
-          obj.x += $.easing["easeInSine"](null, screenW / 2 - abs(x) - 2 * edge, 0, 6, 2 * edge);
+          obj.x += $.easing.easeInSine(null, screenW / 2 - abs(x) - 2 * edge, 0, 6, 2 * edge);
         }
         else if (x > screenW / 2 - 2 * edge) {
-          obj.x += $.easing["easeInSine"](null, screenW / 2 - abs(x) - 2 * edge, 0, -6, 2 * edge);
+          obj.x += $.easing.easeInSine(null, screenW / 2 - abs(x) - 2 * edge, 0, -6, 2 * edge);
         }
 
         if (y < -screenH / 2 + 2 * edge) {
-          obj.y += $.easing["easeInSine"](null, screenH / 2 - abs(y) - 2 * edge, 0, 8, 2 * edge);
+          obj.y += $.easing.easeInSine(null, screenH / 2 - abs(y) - 2 * edge, 0, 8, 2 * edge);
         }
         else if(y > screenH / 2 - 2 * edge) {
-          obj.y += $.easing["easeInSine"](null, screenH / 2 - abs(y) - 2 * edge, 0, -8, 2 * edge);
+          obj.y += $.easing.easeInSine(null, screenH / 2 - abs(y) - 2 * edge, 0, -8, 2 * edge);
         }
       }
 
