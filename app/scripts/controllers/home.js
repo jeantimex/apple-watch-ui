@@ -52,7 +52,7 @@ angular.module('AppleWatchUIApp')
         $scope.apps.push({'x': 0, 'y': 0, 'z': 0, 'scale': 0});
       }
 
-      var t = TransformFactory.getTransform(150, 190, 100, 31.5, 0, 0);
+      var t = TransformFactory.getTransform(screenW, screenH, sphereR, hexR, 0, 0);
       transformApps(t);
     };
 
