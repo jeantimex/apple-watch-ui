@@ -18,8 +18,6 @@ angular.module('AppleWatchUIApp')
         screenH  = 190,
         scrollX  = 0,
         scrollY  = 0,
-        moveX    = 0,
-        moveY    = 0,
         sphereR  = 100,
         hexR     = 32,
         numApps  = 19;
@@ -42,33 +40,11 @@ angular.module('AppleWatchUIApp')
     }
 
     // ---------------------------------------
-    //  adjust scrollX, scrollY
-    // ---------------------------------------
-    function adjustScrollXY(v) {
-      if (scrollX > RANGE_X) {
-        scrollX = RANGE_X + (scrollX - RANGE_X) / v;
-      } else if (scrollX < -RANGE_X) {
-        scrollX = -RANGE_X + (scrollX + RANGE_X) / v;
-      }
-
-      if (scrollY > RANGE_Y) {
-        scrollY = RANGE_Y + (scrollY - RANGE_Y) / v;
-      } else if (scrollY < -RANGE_Y) {
-        scrollY = -RANGE_Y + (scrollY + RANGE_Y) / v;
-      }
-    }
-
-    // ---------------------------------------
     //  touch move
     // ---------------------------------------
     $scope.$on('touchmove', function (e, dx, dy) {
-      moveX += dx;
-      moveY += dy;
-
-      scrollX = moveX;
-      scrollY = moveY;
-
-      adjustScrollXY(2);
+      scrollX += dx;
+      scrollY += dy;
 
       $scope.$apply(function () {
         transformApps();
@@ -87,9 +63,9 @@ angular.module('AppleWatchUIApp')
     function timeoutHandler() {
       // TODO...
 
-      if (step < steps) {
-        timer = $timeout(timeoutHandler, TIMEOUT_INTERVAL);
-      }
+      //if (step < steps) {
+      //  timer = $timeout(timeoutHandler, TIMEOUT_INTERVAL);
+      //}
     }
 
     // ---------------------------------------
