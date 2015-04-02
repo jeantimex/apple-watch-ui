@@ -6,7 +6,8 @@
 
 angular
   .module('AppleWatchUIApp')
-  .factory('TransformFactory', function () {
+  .constant('MAX_HEX_LAYER', 4)
+  .factory('TransformFactory', function (MAX_HEX_LAYER) {
 
     var service = {};
 
@@ -57,8 +58,6 @@ angular
      * @param layer
      */
     var getHexagonalCoordinates = function (layer) {
-      var res = [];
-
       if (!angular.isArray(hexCoordinates)) {
         hexCoordinates = [];
 
@@ -75,122 +74,101 @@ angular
         }
       }
 
-      angular.copy(hexCoordinates, res);
-
-      return res;
+      return hexCoordinates;
     };
 
     /**
      * Calculate the transform objects
      *
+     * @param idx
      * @param screenW
      * @param screenH
      * @param sphereR
      * @param hexR
      * @param scrollX
      * @param scrollY
-     * @returns {Array}
+     * @returns {{x: number, y: number, scale: number}}
      */
-    service.getTransform = function (screenW, screenH, sphereR, hexR, scrollX, scrollY) {
-      var depth;
-
+    service.getTransform = function (idx, screenW, screenH, sphereR, hexR, scrollX, scrollY) {
       // Step 1. Calculate the hexagonal layout in cartesian system
-      var hexCartesian = [];
-      var coordinates = getHexagonalCoordinates(4);
-      var len = coordinates.length;
+      var coordinates = getHexagonalCoordinates(MAX_HEX_LAYER);
+      var coor = coordinates[idx];
 
-      for (var i = 0; i < len; i++) {
-        var coor = coordinates[i];
-
-        hexCartesian.push({
-          'x': (coor.x / 2 + coor.y) * hexR + scrollX,
-          'y': Math.sqrt(3) / 2 * coor.x * hexR + scrollY
-        });
-      }
+      var hexCartesian = {
+        'x': (coor.x / 2 + coor.y) * hexR + scrollX,
+        'y': Math.sqrt(3) / 2 * coor.x * hexR + scrollY
+      };
 
       // Step 2. Convert the cartesian system to polar system
-      var hexPolar = [];
-
-      for (i = 0; i < len; i++) {
-        hexPolar[i] = cartesian2polar(hexCartesian[i].x, hexCartesian[i].y);
-      }
+      var hexPolar = cartesian2polar(hexCartesian.x, hexCartesian.y);
 
       // Step 3. Convert the polar system to sphere system
-      var hexSphere = [];
+      var angle = hexPolar.radius / sphereR;
+      var radius, depth;
 
-      for (i = 0; i < len; i++) {
-        var angle = hexPolar[i].radius / sphereR;
-        var radius;
-
-        if (angle < Math.PI / 2) {
-          radius = hexPolar[i].radius * $.easing.swing(null, angle / (Math.PI / 2), 1.5, -0.5, 1);
-          depth = $.easing.easeInOutCubic(null, angle / (Math.PI / 2), 1, -0.5, 1);
-        } else {
-          radius = hexPolar[i].radius;
-          depth = $.easing.easeInOutCubic(null, 1, 1, -0.5, 1);
-        }
-
-        hexSphere[i] = {
-          'radius' : radius,
-          'depth'  : depth,
-          'angle'  : hexPolar[i].angle
-        };
+      if (angle < Math.PI / 2) {
+        radius = hexPolar.radius * $.easing.swing(null, angle / (Math.PI / 2), 1.5, -0.5, 1);
+        depth = $.easing.easeInOutCubic(null, angle / (Math.PI / 2), 1, -0.5, 1);
+      } else {
+        radius = hexPolar.radius;
+        depth = $.easing.easeInOutCubic(null, 1, 1, -0.5, 1);
       }
+
+      var hexSphere = {
+        'radius' : radius,
+        'depth'  : depth,
+        'angle'  : hexPolar.angle
+      };
 
       // Step 4. Convert sphere system to catesian
-      for (i = 0; i < len; i++) {
-        hexCartesian[i] = polar2cartesian(hexSphere[i].radius, hexSphere[i].angle);
+      hexCartesian = polar2cartesian(hexSphere.radius, hexSphere.angle);
 
-        //
-        hexCartesian[i].x = Math.round(hexCartesian[i].x * 10) / 10;
-        hexCartesian[i].y = Math.round(hexCartesian[i].y * 10) / 10 * 1.14;
-      }
+      //
+      hexCartesian.x = Math.round(hexCartesian.x * 10) / 10;
+      hexCartesian.y = Math.round(hexCartesian.y * 10) / 10 * 1.14;
 
       // Step 5.
-      var edge = 17;
+      var x = hexCartesian.x,
+          y = hexCartesian.y,
+          scale = 0,
+          edge = 17;
 
-      for (i = 0; i < len; i++) {
-        var obj = hexCartesian[i],
-            x = obj.x,
-            y = obj.y;
+      depth = hexSphere.depth;
 
-        depth = hexSphere[i].depth;
-
-        // Calculate the scale
-        if (abs(x) > screenW / 2 - edge || abs(y) > screenH / 2 - edge) {
-          obj.scale = depth * 0.4;
-        }
-        else if (abs(x) > screenW / 2 - 2 * edge && abs(y) > screenH / 2 - 2 * edge) {
-          obj.scale = Math.min(depth * $.easing.easeInOutSine(null, screenW / 2 - abs(x) - edge, 0.4, 0.6, edge),
-                               depth * $.easing.easeInOutSine(null, screenH / 2 - abs(y) - edge, 0.3, 0.7, edge));
-        }
-        else if (abs(x) > screenW / 2 - 2 * edge) {
-          obj.scale = depth * $.easing.easeOutSine(null, screenW / 2 - abs(x) - edge, 0.4, 0.6, edge);
-        }
-        else if (abs(y) > screenH / 2 - 2 * edge) {
-          obj.scale = depth * $.easing.easeOutSine(null, screenH / 2 - abs(y) - edge, 0.4, 0.6, edge);
-        }
-        else {
-          obj.scale = depth;
-        }
-
-        // Adjust the x y position
-        if (x < -screenW / 2 + 2 * edge) {
-          obj.x += $.easing.easeInSine(null, screenW / 2 - abs(x) - 2 * edge, 0, 6, 2 * edge);
-        }
-        else if (x > screenW / 2 - 2 * edge) {
-          obj.x += $.easing.easeInSine(null, screenW / 2 - abs(x) - 2 * edge, 0, -6, 2 * edge);
-        }
-
-        if (y < -screenH / 2 + 2 * edge) {
-          obj.y += $.easing.easeInSine(null, screenH / 2 - abs(y) - 2 * edge, 0, 8, 2 * edge);
-        }
-        else if (y > screenH / 2 - 2 * edge) {
-          obj.y += $.easing.easeInSine(null, screenH / 2 - abs(y) - 2 * edge, 0, -8, 2 * edge);
-        }
+      // Calculate the scale
+      if (abs(x) > screenW / 2 - edge || abs(y) > screenH / 2 - edge) {
+        scale = depth * 0.4;
+      }
+      else if (abs(x) > screenW / 2 - 2 * edge && abs(y) > screenH / 2 - 2 * edge) {
+        scale = Math.min(depth * $.easing.easeInOutSine(null, screenW / 2 - abs(x) - edge, 0.4, 0.6, edge),
+                         depth * $.easing.easeInOutSine(null, screenH / 2 - abs(y) - edge, 0.3, 0.7, edge));
+      }
+      else if (abs(x) > screenW / 2 - 2 * edge) {
+        scale = depth * $.easing.easeOutSine(null, screenW / 2 - abs(x) - edge, 0.4, 0.6, edge);
+      }
+      else if (abs(y) > screenH / 2 - 2 * edge) {
+        scale = depth * $.easing.easeOutSine(null, screenH / 2 - abs(y) - edge, 0.4, 0.6, edge);
+      }
+      else {
+        scale = depth;
       }
 
-      return hexCartesian;
+      // Adjust the x y position
+      if (x < -screenW / 2 + 2 * edge) {
+        x += $.easing.easeInSine(null, screenW / 2 - abs(x) - 2 * edge, 0, 6, 2 * edge);
+      }
+      else if (x > screenW / 2 - 2 * edge) {
+        x += $.easing.easeInSine(null, screenW / 2 - abs(x) - 2 * edge, 0, -6, 2 * edge);
+      }
+
+      if (y < -screenH / 2 + 2 * edge) {
+        y += $.easing.easeInSine(null, screenH / 2 - abs(y) - 2 * edge, 0, 8, 2 * edge);
+      }
+      else if (y > screenH / 2 - 2 * edge) {
+        y += $.easing.easeInSine(null, screenH / 2 - abs(y) - 2 * edge, 0, -8, 2 * edge);
+      }
+
+      return {'x': x, 'y': y, 'scale': scale};
     };
 
     return service;
