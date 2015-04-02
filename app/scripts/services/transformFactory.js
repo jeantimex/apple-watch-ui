@@ -6,7 +6,7 @@
 
 angular
   .module('AppleWatchUIApp')
-  .constant('MAX_HEX_LAYER', 4)
+  .constant('MAX_HEX_LAYER', 5)
   .factory('TransformFactory', function (MAX_HEX_LAYER) {
 
     var service = {};
