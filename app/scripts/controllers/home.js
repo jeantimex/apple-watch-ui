@@ -17,6 +17,8 @@ angular.module('AppleWatchUIApp')
                                     TIMEOUT_INTERVAL, TIMEOUT_STEPS, RANGE_X, RANGE_Y, APP_SIZE) {
     var screenW  = 135,
         screenH  = 170,
+        moveX    = 0,
+        moveY    = 0,
         scrollX  = 0,
         scrollY  = 0,
         sphereR  = 100,
@@ -56,8 +58,11 @@ angular.module('AppleWatchUIApp')
       // we adjust the scroll speed
       var v = angular.isObject(maxApp) ? maxApp.scale : 1;
 
-      scrollX += dx * v;
-      scrollY += dy * v;
+      moveX = dx;
+      moveY = dy;
+
+      scrollX += moveX * v;
+      scrollY += moveY * v;
 
       $scope.$apply(function () {
         transformApps();
@@ -68,14 +73,21 @@ angular.module('AppleWatchUIApp')
     //  touch end
     // ---------------------------------------
     $scope.$on('touchend', function () {
-      if (angular.isObject(maxApp) && maxApp.scale < 0.6) {
-        var distX = screenW / 2 - APP_SIZE / 2 - maxApp.x,
-            distY = screenH / 2 - APP_SIZE / 2 - maxApp.y;
+      var distX = 0,
+          distY = 0;
 
-        $timeout(function () {
-          timeoutHandler(1, distX, distY);
-        }, TIMEOUT_INTERVAL);
+      if (angular.isObject(maxApp) && maxApp.scale < 0.6) {
+        distX = screenW / 2 - APP_SIZE / 2 - maxApp.x;
+        distY = screenH / 2 - APP_SIZE / 2 - maxApp.y;
       }
+      else if (Math.abs(moveX) > 1 || Math.abs(moveY) > 1) {
+        distX = moveX * 3;
+        distY = moveX * 3;
+      }
+
+      $timeout(function () {
+        timeoutHandler(1, distX, distY);
+      }, TIMEOUT_INTERVAL);
     });
 
     /**
