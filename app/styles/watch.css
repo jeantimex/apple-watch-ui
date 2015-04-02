@@ -1,16 +1,17 @@
 .watch {
-  width: 250px;
-  height: 460px;
-  background: url("../images/apple-watch.png") no-repeat;
+  width: 200px;
+  height: 372px;
+  background: url("../images/apple-watch-white.png") no-repeat;
   position: relative;
+  margin-bottom: 25px;
 }
 
 .viewport {
   position: absolute;
-  width: 150px;
-  height: 190px;
-  left: 44px;
-  top: 130px;
+  width: 135px;
+  height: 170px;
+  left: 30px;
+  top: 100px;
   overflow: hidden;
 }
 
@@ -20,8 +21,8 @@
 
 .home {
   position: absolute;
-  width: 150px;
-  height: 190px;
+  width: 135px;
+  height: 170px;
 }
 
 .app {
@@ -29,5 +30,7 @@
   width: 37px;
   height: 37px;
   border-radius: 50%;
-  background-color: white;
+  transform-origin: center;
+  background-size: 37px 37px;
+  background-color: transparent;
 }

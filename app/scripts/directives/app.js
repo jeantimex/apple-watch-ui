@@ -17,7 +17,10 @@ angular
       // Transform
       scope.$watch(attrs.app, function (app) {
         var transformCSS = 'translate3d(' + app.x + 'px,' + app.y + 'px,' + app.z + 'px) scale(' + app.scale + ')';
-        element.css('transform', transformCSS);
+        element.css({
+          'transform': transformCSS,
+          'background-image': 'url(images/apps/' + app.id + '.png)'
+        });
       }, true);
     }
   };

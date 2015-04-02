@@ -10,18 +10,17 @@
 angular.module('AppleWatchUIApp')
   .constant('RANGE_X',          30)
   .constant('RANGE_Y',          10)
-  .constant('APP_SIZE',         35)
+  .constant('APP_SIZE',         37)
   .constant('TIMEOUT_STEPS',    30)
   .constant('TIMEOUT_INTERVAL', 15)
-  .controller('HomeCtrl', function ($scope, $timeout, TransformFactory,
+  .controller('HomeCtrl', function ($scope, $timeout, $log, AppService, TransformFactory,
                                     TIMEOUT_INTERVAL, TIMEOUT_STEPS, RANGE_X, RANGE_Y, APP_SIZE) {
-    var screenW  = 150,
-        screenH  = 190,
+    var screenW  = 135,
+        screenH  = 170,
         scrollX  = 0,
         scrollY  = 0,
         sphereR  = 100,
         hexR     = 32,
-        numApps  = 25,
         maxApp   = null;
 
     // All apps
@@ -102,11 +101,14 @@ angular.module('AppleWatchUIApp')
     //  initialize
     // ---------------------------------------
     function init() {
-      for (var i = 0; i < numApps; i++) {
-        $scope.apps.push({'x': 0, 'y': 0, 'z': 0, 'scale': 1});
-      }
-
-      transformApps();
+      // Load apps
+      AppService.loadApps()
+        .then(function (data) {
+          $scope.apps = data;
+          transformApps();
+        }, function (err) {
+          $log.error(err);
+        });
     }
 
     init();

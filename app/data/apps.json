@@ -1,0 +1,78 @@
+[
+  {
+    "id": 1,
+    "name": "Clock"
+  },
+  {
+    "id": 2,
+    "name": "Phone"
+  },
+  {
+    "id": 3,
+    "name": "iMessage"
+  },
+  {
+    "id": 4,
+    "name": "Mail"
+  },
+  {
+    "id": 5,
+    "name": "Photos"
+  },
+  {
+    "id": 6,
+    "name": "Camera"
+  },
+  {
+    "id": 7,
+    "name": "Calendar"
+  },
+  {
+    "id": 8,
+    "name": "Safari"
+  },
+  {
+    "id": 9,
+    "name": "Weather"
+  },
+  {
+    "id": 10,
+    "name": "Music"
+  },
+  {
+    "id": 11,
+    "name": "Timer"
+  },
+  {
+    "id": 12,
+    "name": "Running"
+  },
+  {
+    "id": 13,
+    "name": "Fitness"
+  },
+  {
+    "id": 14,
+    "name": "Passport & Pay"
+  },
+  {
+    "id": 15,
+    "name": "Settings"
+  },
+  {
+    "id": 16,
+    "name": "Movies"
+  },
+  {
+    "id": 17,
+    "name": "Map"
+  },
+  {
+    "id": 18,
+    "name": "Fatduck"
+  },
+  {
+    "id": 19,
+    "name": "RetailNext"
+  }
+]
