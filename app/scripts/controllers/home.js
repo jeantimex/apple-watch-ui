@@ -83,7 +83,7 @@ angular.module('AppleWatchUIApp')
       }
       else if (Math.abs(moveX) > 1 || Math.abs(moveY) > 1) {
         distX = moveX * 3;
-        distY = moveX * 3;
+        distY = moveY * 3;
       }
 
       moveX = 0;

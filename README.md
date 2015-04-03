@@ -1,4 +1,4 @@
-# apple watch ui
+# Apple Watch UI
 Implement Apple Watch UI with AngularJS
 
 This repo holds the source code for implementing Apple Watch UI with AngularJS. <br/><br/>
