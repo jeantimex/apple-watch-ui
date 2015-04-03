@@ -79,11 +79,15 @@ angular.module('AppleWatchUIApp')
       if (angular.isObject(maxApp) && maxApp.scale < 0.6) {
         distX = screenW / 2 - APP_SIZE / 2 - maxApp.x;
         distY = screenH / 2 - APP_SIZE / 2 - maxApp.y;
+        maxApp = null;
       }
       else if (Math.abs(moveX) > 1 || Math.abs(moveY) > 1) {
         distX = moveX * 3;
         distY = moveX * 3;
       }
+
+      moveX = 0;
+      moveY = 0;
 
       $timeout(function () {
         timeoutHandler(1, distX, distY);
