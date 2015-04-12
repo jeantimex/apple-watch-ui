@@ -11,15 +11,9 @@ angular
       restrict: 'E',
 
       // -----------------------------
-      //  Controller
-      // -----------------------------
-      controller: function () {
-
-      },
-
-      // -----------------------------
       //  Link
       // -----------------------------
+
       link: function (scope, element) {
         // add css class
         element.addClass('viewport');
