@@ -18,9 +18,13 @@
   <hr/>
 
   <!-- Algorithm -->
-  <!-- <h4>Algorithm</h4>
-  <p></p>
-  <hr/> -->
+  <h4>Algorithm</h4>
+  <p>The layout of the app icons in Apple Watch is kind of like a hexagon layout, the algorithm to generate the x,y,z positions can be found <a href="http://stackoverflow.com/questions/2049196/generating-triangular-hexagonal-coordinates-xyz">here</a>.</p>
+  <div class="center-block">
+    <img src="images/hexagon.png" class="img-responsive center-block"/>
+  </div>
+  <p>If you look at the Apple Watch closely, you will see that those icons do not just simply layout in a perfect hexagon way, instead it's a bit like a sphere. The next step is to convert the hexagon layout to make it more like a sphere. Also, to make the conversion smoothly, we can use <a href="http://gsgd.co.uk/sandbox/jquery/easing/">jquery.easing</a>. See the source code for more details.</p>
+  <hr/>
 
   <!-- Source -->
   <h4>Complete source</h4>
